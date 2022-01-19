@@ -1,0 +1,9 @@
+{
+    "name": "gamertuff/lilou-view",
+    "autoload": {
+        "psr-4": {
+            "LilouView\\": "src/"
+        }
+    },
+    "require": {}
+}
