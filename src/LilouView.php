@@ -4,25 +4,57 @@ namespace LilouView;
 
 class LilouView {
 
-    private string $regex = '/@[A-Za-z\s]+\((.*)\)/';
-
+    /**
+     * Toutes les fonctions
+     * 
+     * @var LilouFunc
+     */
     private LilouFunc $lilouFunc;
 
+    /**
+     * Contenue du fichier .lilou
+     * 
+     * @var string
+     */
+    private string $content;
+
+    /**
+     * Constructeur
+     */
     public function __construct()
     {
         $this->lilouFunc = new LilouFunc();
     }
 
-    public function render(string $file)
+    /**
+     * Permet de load une vue
+     *
+     * @param string $file
+     * @return self
+     */
+    public function load(string $file): self
     {
         if (pathinfo($file)['extension'] != 'lilou') {
             throw new \Exception('The file extension must be .lilou');
         }
 
-        $content = file_get_contents($file);
+        $this->content = file_get_contents($file);
 
+        $this->preg_func();
+        $this->preg_components();
+
+        return $this;
+    }
+
+    /**
+     * Permet de chercher les functions dans le fichier
+     *
+     * @return void
+     */
+    private function preg_func()
+    {
         // Get all the @function("content")
-        preg_match_all($this->regex, $content, $matches);
+        preg_match_all('/@[A-Za-z\s]+\((.*)\)/', $this->content, $matches);
 
         // Get the function name
         foreach ($matches[0] as $value) {
@@ -40,14 +72,44 @@ class LilouView {
                 // Method exists ?
                 if (method_exists($this->lilouFunc, $funcName)) {
                     $r = call_user_func_array([$this->lilouFunc, $funcName], $args);
-                    $content = str_replace($value, $r, $content);
+                    $this->content = str_replace($value, $r, $this->content);
                 }
             }
         }
+    }
 
-        echo $content;
+    /**
+     * Permet de chercher les components dans le fichier
+     *
+     * @return void
+     */
+    private function preg_components()
+    {
+        preg_match_all('/<l-(.*)>(.*)<\/l-(.*)>/', $this->content, $matches);
 
-        return $this;
+        // dd($matches);
+        foreach ($matches[1] as $key => $value) {
+
+            $replace = preg_replace('/\sid="(.*)"/', '', $value);
+            if ($replace != $matches[3][$key]) {
+                throw new \Exception('The id is not the same');
+            }
+
+            $options = [];
+
+            if (!empty($matches[2][$key])) $options['slot'] = $matches[2][$key];
+
+            $component = $this->lilouFunc->component($value, $options);
+
+            $this->content = str_replace($matches[0][$key], $component, $this->content);
+        }
+
+        echo( $this->content);
+    }
+
+    public function render()
+    {
+        return;
     }
 
 }
