@@ -40,8 +40,7 @@ class LilouView {
 
         $this->content = file_get_contents($file);
 
-        $this->preg_func();
-        $this->preg_components();
+        $this->func();
 
         return $this;
     }
@@ -51,7 +50,7 @@ class LilouView {
      *
      * @return void
      */
-    private function preg_func()
+    private function func(): void
     {
         // Get all the @function("content")
         preg_match_all('/@[A-Za-z\s]+\((.*)\)/', $this->content, $matches);
@@ -59,11 +58,11 @@ class LilouView {
         // Get the function name
         foreach ($matches[0] as $value) {
             // Preg test
-            preg_match('/\((.*)\)/', $value, $match);
+            preg_match('/\((.*)\)/', $value, $content_func);
             preg_match('/@[^@]+\(/', $value, $func);
 
             // get Args for function
-            $args = explode(',', str_replace("\"", "", $match[1]));
+            $args = explode(',', str_replace("\"", "", $content_func[1]));
 
             foreach ($func as $funcName) {
                 // Remove the @ and (
@@ -76,6 +75,8 @@ class LilouView {
                 }
             }
         }
+
+        $this->comp();
     }
 
     /**
@@ -83,7 +84,7 @@ class LilouView {
      *
      * @return void
      */
-    private function preg_components()
+    private function comp(): void
     {
         preg_match_all('/<l-(.*)>(.*)<\/l-(.*)>/', $this->content, $matches);
 
@@ -102,14 +103,19 @@ class LilouView {
             $component = $this->lilouFunc->component($value, $options);
 
             $this->content = str_replace($matches[0][$key], $component, $this->content);
+            
+            $this->func();
         }
-
-        echo( $this->content);
     }
 
-    public function render()
+    /**
+     * Render view
+     *
+     * @return string
+     */
+    public function render(): string
     {
-        return;
+        return $this->content;
     }
 
 }

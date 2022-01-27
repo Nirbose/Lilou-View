@@ -29,4 +29,12 @@ class LilouFunc {
         return $content;
     }
 
+    public function sum(string ...$numbers) {
+        $sum = 0;
+        foreach ($numbers as $number) {
+            $sum += intval($number);
+        }
+        return $sum;
+    }
+
 }

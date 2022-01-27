@@ -1,6 +1,9 @@
 {
     "name": "gamertuff/lilou-view",
     "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
         "psr-4": {
             "LilouView\\": "src/"
         }

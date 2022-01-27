@@ -3,3 +3,5 @@
 <l-test-c>Hello main</l-test-c>
 
 @echo("YO !")
+
+@sum("1, 2")
