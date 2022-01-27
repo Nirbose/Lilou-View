@@ -1,5 +1,10 @@
 <?php
 
-include './vendor/autoload.php';
+use LilouView\LilouCompiler;
+use LilouView\LilouView;
+use LilouView\Parser;
 
-view('./view/test');
+require_once './vendor/autoload.php';
+
+$l = new LilouView('./view');
+echo $l->make('home');
