@@ -4,4 +4,6 @@
 
 @echo("YO !")
 
-@sum("1, 2")
+@if(1 == 1)
+    @echo("C'est exactement le cas")
+@endif

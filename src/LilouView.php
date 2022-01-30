@@ -7,36 +7,53 @@ use LilouView\Compilers\LilouCompiler;
 class LilouView {
 
     /**
-     * Toutes les fonctions
-     * 
-     * @var LilouFunc
-     */
-    private LilouFunc $lilouFunc;
-
-    /**
      * Contenue du fichier .lilou
      * 
      * @var string
      */
     protected string $content;
 
-    private string $folder;
+    /**
+     * View Folder
+     *
+     * @var string
+     */
+    protected string $folder;
 
     /**
      * Constructeur
      */
-    public function __construct(string $folder)
+    public function __construct(string $folder = "")
     {
-        $this->folder = dirname(__DIR__) . '/' . trim($folder, '/') . '/';
-        $this->lilouFunc = new LilouFunc();
+        if (empty($this->folder)) {
+            $this->folder = dirname(__DIR__) . '/' . trim($folder, '/');
+        }
     }
 
     public function make(string $file, array $data = []) {
-        $this->content = file_get_contents($this->folder . $file . '.lilou.php');
-
+        $this->content = file_get_contents($this->folder . '/' . $file . '.lilou.php');
+        
         $compiler = new LilouCompiler();
-        dump($compiler->compile($this->content));
-        return $compiler->compile($this->content);
+        $compiler->compile($this->content, $file);
+    }
+
+    /**
+     * Render content view in cache
+     *
+     * @param string $file
+     * @return void
+     */
+    public function render(string $file)
+    {
+        $file = $this->folder . 'cache/' . sha1($file) . '.php';
+        
+        if (file_exists($file) === false) {
+            return;
+        }
+
+        require_once $file;
+
+        return;
     }
 
 }
