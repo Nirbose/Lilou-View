@@ -23,7 +23,7 @@ class LilouView {
     /**
      * Constructeur
      */
-    public function __construct(string $folder = "")
+    public function __construct($engine, string $folder = "")
     {
         if (empty($this->folder)) {
             $this->folder = dirname(__DIR__) . '/' . trim($folder, '/');
@@ -33,8 +33,7 @@ class LilouView {
     public function make(string $file, array $data = []) {
         $this->content = file_get_contents($this->folder . '/' . $file . '.lilou.php');
         
-        $compiler = new LilouCompiler();
-        $compiler->compile($this->content, $file);
+        LilouCompiler::compile($this->content, $file, $this->folder);
     }
 
     /**
@@ -45,7 +44,7 @@ class LilouView {
      */
     public function render(string $file)
     {
-        $file = $this->folder . 'cache/' . sha1($file) . '.php';
+        $file = $this->folder . '/cache/' . sha1($file) . '.php';
         
         if (file_exists($file) === false) {
             return;

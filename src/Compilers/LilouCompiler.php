@@ -5,7 +5,7 @@ namespace LilouView\Compilers;
 use LilouView\LilouView;
 use LilouView\Parser;
 
-class LilouCompiler extends LilouView {
+class LilouCompiler {
 
     /**
      * Array of open and closing tags for escaped content
@@ -21,14 +21,14 @@ class LilouCompiler extends LilouView {
      */
     protected array $contentTags = ['{{', '}}'];
 
-    public function compile(string $content, string $name) {
+    public static function compile(string $content, string $name, string $folder = "") {
         $parse =  Parser::parse($content);
 
-        if (is_dir($this->folder . 'view/cache/') === false) {
-            mkdir($this->folder . 'view/cache/', 0777, true);
+        if (is_dir($folder . '/cache/') === false) {
+            mkdir($folder . '/cache/', 0777, true);
         }
 
-        $file = $this->folder . 'view/cache/' . sha1($name) . '.php';
+        $file = $folder . '/cache/' . sha1($name) . '.php';
 
         file_put_contents($file, $parse);
     }

@@ -4,6 +4,6 @@
 
 @echo("YO !")
 
-@if(1 == 1)
-    @echo("C'est exactement le cas")
+@if(1==1)
+    <p>iofodsf</p>
 @endif

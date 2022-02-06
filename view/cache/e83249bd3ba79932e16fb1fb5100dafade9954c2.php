@@ -4,6 +4,6 @@
 
 <?php echo("YO !") ?>
 
-<?php if(1 == 1) ?>
-    <?php echo("C'est exactement le cas") ?>
-<?php endif ?>
+<?php if(1==1): ?>
+    <p>iofodsf</p>
+<?php endif; ?>
