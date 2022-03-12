@@ -33,7 +33,8 @@ class LilouView {
     public function make(string $file, array $data = []) {
         $this->content = file_get_contents($this->folder . '/' . $file . '.lilou.php');
         
-        LilouCompiler::compile($this->content, $file, $this->folder);
+        $compiler = new LilouCompiler($file, $this->folder);
+        $compiler->compile($this->content, $data);
     }
 
     /**

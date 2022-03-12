@@ -44,4 +44,8 @@ class BasicEngine {
         return "<?php endwhile; ?>";
     }
 
+    public function include($content = "") {
+        return "<?php include($content); ?>";
+    }
+
 }

@@ -7,28 +7,31 @@ use LilouView\Parser;
 
 class LilouCompiler {
 
-    /**
-     * Array of open and closing tags for escaped content
-     *
-     * @var array
-     */
-    protected array $rawTags = ['{!', '!}'];
+    private string $cache;
 
-    /**
-     * Array of open and closing tags for content
-     *
-     * @var array
-     */
-    protected array $contentTags = ['{{', '}}'];
+    private string $name;
 
-    public static function compile(string $content, string $name, string $folder = "") {
+    public function __construct(string $name, string $cache)
+    {
+        $this->name = $name;
+        $this->cache = $cache;
+    }
+
+    public function compile(string $content, array $data) {
         $parse =  Parser::parse($content);
 
-        if (is_dir($folder . '/cache/') === false) {
-            mkdir($folder . '/cache/', 0777, true);
+        $pattern = '/\{\{(.*)\}\}/';
+        preg_match_all($pattern, $parse, $matches);
+
+        foreach ($matches[1] as $match) {
+            $parse = str_replace('{{' . $match . '}}', $data[trim(substr($match, 2, strlen($match) - 1))], $parse);
         }
 
-        $file = $folder . '/cache/' . sha1($name) . '.php';
+        if (is_dir($this->cache . '/cache/') === false) {
+            mkdir($this->cache . '/cache/', 0777, true);
+        }
+
+        $file = $this->cache . '/cache/' . sha1($this->name) . '.php';
 
         file_put_contents($file, $parse);
     }
