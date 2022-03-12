@@ -1,5 +1,5 @@
 {
-    "name": "gamertuff/lilou-view",
+    "name": "nirbose/lilou-view",
     "autoload": {
         "psr-4": {
             "LilouView\\": "src/"
