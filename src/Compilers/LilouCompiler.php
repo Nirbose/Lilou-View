@@ -19,6 +19,12 @@ class LilouCompiler {
     {
         $tags = new LilouTagsCompiler();
         $parse = $tags->compile($content);
+        
+        foreach ($tags->getVars() as $key => $value) {
+            $data[$key] = $value;
+        }
+
+        dump($data);
 
         $parse =  Parser::parse($parse);
 

@@ -12,13 +12,15 @@ class LilouTagsCompiler {
         '<l-(.*)\/>'
     ];
 
+    private array $vars = [];
+
     public function compile(string $content): string
     {
         $pattern = '/' . $this->htmlTags[0] . '(.*)' . $this->htmlTags[1] . '/';
         preg_match_all($pattern, $content, $matches);
 
         foreach ($matches[1] as $key => $matche) {
-            dump($matche);
+            $this->vars['slot'] = $matches[2][$key];
 
             $component = file_get_contents(dirname(__DIR__) . '/../' . trim(Config::get('componentsFolderPath'), '/') . '/' . $matche . '.lilou.php');
 
@@ -26,6 +28,11 @@ class LilouTagsCompiler {
         }
 
         return $content;
+    }
+
+    public function getVars(): array
+    {
+        return $this->vars;
     }
 
 }
