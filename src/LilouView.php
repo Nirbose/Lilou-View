@@ -3,15 +3,9 @@
 namespace LilouView;
 
 use LilouView\Compilers\LilouCompiler;
+use LilouView\Config\Config;
 
 class LilouView {
-
-    /**
-     * Contenue du fichier .lilou
-     * 
-     * @var string
-     */
-    protected string $content;
 
     /**
      * View Folder
@@ -23,18 +17,26 @@ class LilouView {
     /**
      * Constructeur
      */
-    public function __construct($engine, string $folder = "")
+    public function __construct($engine)
     {
-        if (empty($this->folder)) {
-            $this->folder = dirname(__DIR__) . '/' . trim($folder, '/');
-        }
+        $this->folder = dirname(__DIR__) . '/' . trim(Config::get('viewsFolderPath'), '/');
     }
 
-    public function make(string $file, array $data = []) {
-        $this->content = file_get_contents($this->folder . '/' . $file . '.lilou.php');
+    /**
+     * Make view file in PHP
+     *
+     * @param string $file
+     * @param array $data
+     * @return self
+     */
+    public function make(string $file, array $data = []): self
+    {
+        $content = file_get_contents($this->folder . '/' . $file . '.lilou.php');
         
         $compiler = new LilouCompiler($file, $this->folder);
-        $compiler->compile($this->content, $data);
+        $compiler->compile($content, $data);
+
+        return $this;
     }
 
     /**
@@ -52,8 +54,6 @@ class LilouView {
         }
 
         require_once $file;
-
-        return;
     }
 
 }

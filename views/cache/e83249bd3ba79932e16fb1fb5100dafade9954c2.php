@@ -2,7 +2,10 @@
 
 <p>My name is Lilou</p>
 
-<l-test-c>Hello main</l-test-c>
+<div>
+    <h1>Test-C</h1>
+    
+</div>
 
 <?php echo("YO !") ?>
 

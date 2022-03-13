@@ -2,23 +2,25 @@
 
 namespace LilouView\Compilers;
 
+use LilouView\Config\Config;
 use LilouView\LilouView;
 use LilouView\Parser;
 
 class LilouCompiler {
 
-    private string $cache;
-
     private string $name;
 
-    public function __construct(string $name, string $cache)
+    public function __construct(string $name)
     {
         $this->name = $name;
-        $this->cache = $cache;
     }
 
-    public function compile(string $content, array $data) {
-        $parse =  Parser::parse($content);
+    public function compile(string $content, array $data)
+    {
+        $tags = new LilouTagsCompiler();
+        $parse = $tags->compile($content);
+
+        $parse =  Parser::parse($parse);
 
         $pattern = '/\{\{(.*)\}\}/';
         preg_match_all($pattern, $parse, $matches);
@@ -27,11 +29,7 @@ class LilouCompiler {
             $parse = str_replace('{{' . $match . '}}', $data[trim(substr($match, 2, strlen($match) - 1))], $parse);
         }
 
-        if (is_dir($this->cache . '/cache/') === false) {
-            mkdir($this->cache . '/cache/', 0777, true);
-        }
-
-        $file = $this->cache . '/cache/' . sha1($this->name) . '.php';
+        $file = trim(Config::get('cacheFolderPath'), '/') . '/' . sha1($this->name) . '.php';
 
         file_put_contents($file, $parse);
     }

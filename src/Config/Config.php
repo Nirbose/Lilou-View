@@ -4,7 +4,7 @@ namespace LilouView\Config;
 
 class Config {
 
-    private static string $cacheFolderPath = './cache';
+    private static string $cacheFolderPath = './views/cache';
 
     private static string $viewsFolderPath = './views';
 
