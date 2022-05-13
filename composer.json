@@ -2,7 +2,7 @@
     "name": "nirbose/lilou-view",
     "autoload": {
         "psr-4": {
-            "LilouView\\": "src/"
+            "Nirbose\\LilouView\\": "src/"
         }
     },
     "require-dev": {
