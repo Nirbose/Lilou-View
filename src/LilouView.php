@@ -2,34 +2,64 @@
 
 namespace Nirbose\LilouView;
 
+use Exception;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Filesystem;
+
+/**
+ * LilouView class
+ * 
+ * @method Option make()
+ * @method void set()
+ * @method string render()
+ * @method bool exists()
+ */
 class LilouView {
 
-    protected string $path;
+    private static string $cache = './';
+    private static string $path = './';
 
-    public static function instance(string $path = "")
+    /**
+     * Make a view
+     *
+     * @param string $name
+     * @param array $data
+     * @return LilouOption
+     */
+    public static function make(string $name, array $data = []): LilouOption
     {
+        $filesystem = new Filesystem();
+        $filename = static::$path . $name . '.lilou.php';
 
+        if ( !$filesystem->exists($name . '.lilou.php') )  {
+            new FileNotFoundException("File not found");
+        }
+
+        $content = fopen($filename, "r");
+
+        Tokenizer::parse($content);
+
+        return new LilouOption();
     }
 
-    public function __construct(string $path = "")
+    /**
+     * Set a cache
+     * 
+     * @param string $path
+     * @return void
+     */
+    public static function set(string $key, string $value)
     {
-        $this->path = $path;
-    }
+        $value = trim($value, '/') . '/';
 
-    public function make(string $view, array $data = [])
-    {
-        $file = $this->path . $view . ".lilou.php";
-
-        $template = file_get_contents($file);
-
-        Tokenizer::create($template);
-    }
-
-
-    public function render(string $view, array $data = [])
-    {
-        if (!file_exists($this->path . $view . ".lilou.php")) {
-            $this->make($view, $data);
+        switch (strtolower($key)) {
+            case 'cache':
+                static::$cache = $value;
+                break;
+            case 'path':
+                static::$path = $value;
+                break;
         }
     }
+
 }

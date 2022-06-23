@@ -6,71 +6,35 @@ use Nirbose\LilouView\Exception\TokenizerException;
 
 class Tokenizer {
 
-    /**
-     * @var array Array of regex patterns to match
-     */
-    const TOKEN_REGEX = [
-        "func" => '/@([A-Za-z0-9\ \t]+)\((.*)\)/',
-        "var" => '/{([A-Za-z0-9]+)}/',
+    private array $regex = [
+        'function' => '',
+        'variable' => '',
     ];
 
     /**
-     * @var string The template string
+     * Get instance of Tokenizer
+     *
+     * @return static
      */
-    private string $template;
-
-    /**
-     * @var array Array of tokens
-     */
-    private array $token_types = [
-        "func" => [],
-        "var" => [],
-    ];
-    
-    public static function create(string $template) {
-        return new Tokenizer($template);
+    private static function me(): static
+    {
+        return new static();
     }
 
     /**
-     * Tokenizer constructor.
-     * @param string $template
-     */
-    public function __construct(string $template) {
-        $this->template = $template;
-        $this->tokenize();
-    }
-
-    /**
-     * Tokenize the template string
+     * Parse a string
+     *
+     * @param string $content
      * @return void
-     * @throws TokenizerException
      */
-    private function tokenize() {
-        foreach (self::TOKEN_REGEX as $token_type => $regex) {
-            preg_match_all($regex, $this->template, $matches);
-            $this->token_types[$token_type] = $matches;
-        }
+    public static function parse(string $content)
+    {
+
     }
 
-    /**
-     * Get the tokens
-     * 
-     * @return array
-     */
-    public function getTokens(): array
+    private function replace(): array
     {
-        return $this->token_types;
-    }
-
-    /**
-     * Get the token type
-     * 
-     * @param string $type
-     * @return array
-     */
-    public function getTokenType(string $type): array
-    {
-        return $this->token_types[$type];
+        return [];
     }
 
 }
