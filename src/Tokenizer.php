@@ -6,9 +6,13 @@ use Nirbose\LilouView\Exception\TokenizerException;
 
 class Tokenizer {
 
-    private array $regex = [
-        'function' => '',
-        'variable' => '',
+    const REGEX_FUNCTION = '/@([\d\w\s]+)\((.*)\)/';
+    const REGEX_VARIABLE = '';
+
+    private static string $view;
+    public array $tokens = [];
+    private static array $noClosuresTokens = [
+        'endif', 'enddeclare', 'endfor', 'endforeach', 'endswitch', 'endwhile'
     ];
 
     /**
@@ -21,20 +25,45 @@ class Tokenizer {
         return new static();
     }
 
+    public static function setToken(string $name, callable $function)
+    {
+        static::me()->tokens[$name] = $function;
+    }
+
     /**
      * Parse a string
      *
      * @param string $content
-     * @return void
+     * @return string
      */
-    public static function parse(string $content)
+    public static function tokenize(string $content)
     {
+        static::$view = $content;
 
+        return static::parser(Tokenizer::REGEX_FUNCTION);
     }
 
-    private function replace(): array
+    private static function parser(string $regex)
     {
-        return [];
+        preg_match_all($regex, static::$view, $matches);
+
+        foreach ($matches[1] as $i => $name) {
+
+            $replace = "<?php " . $name;
+
+            if (! in_array($name, static::$noClosuresTokens)) {
+                $replace .= " (". $matches[2][$i] . "); ?>";
+            }
+
+            static::$view = static::replace($matches[0][$i], $replace);
+        }
+
+        return static::$view;
+    }
+
+    private static function replace($search, $replace)
+    {
+        return str_replace($search, $replace, static::$view);
     }
 
 }

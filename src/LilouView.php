@@ -35,9 +35,10 @@ class LilouView {
             new FileNotFoundException("File not found");
         }
 
-        $content = fopen($filename, "r");
+        $content = file_get_contents($filename);
 
-        Tokenizer::parse($content);
+        $render = Tokenizer::tokenize($content);
+        file_put_contents(static::$cache . $name . ".php", $render);
 
         return new LilouOption();
     }
